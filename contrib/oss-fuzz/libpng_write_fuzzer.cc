@@ -31,7 +31,8 @@
 
 struct BufState
 {
-    const uint8_t *data;
+    // using a ostringstream for the sake of simplicity, simultate File-like behavior
+    std::osstringstream data;
 };
 
 struct PngObjectHandler
@@ -59,7 +60,7 @@ struct PngObjectHandler
 void user_write_data(png_structp png_ptr, png_bytep data, size_t length)
 {
     BufState *buf_state = static_cast<BufState *>(png_get_io_ptr(png_ptr));
-    // simulate writing but for this harnes we just ignore the data
+    buf_state->data.write(reinterpret_cast<const char *>(data), length);
 }
 
 // Needed function for the write API, but not used in this fuzzer.
