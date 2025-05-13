@@ -26,7 +26,6 @@
 cat scripts/pnglibconf.dfa | \
   sed -e "s/option STDIO/option STDIO disabled/" \
       -e "s/option WARNING /option WARNING disabled/" \
-      -e "s/option WRITE enables WRITE_INT_FUNCTIONS/option WRITE disabled/" \
 > scripts/pnglibconf.dfa.temp
 mv scripts/pnglibconf.dfa.temp scripts/pnglibconf.dfa
 
@@ -42,9 +41,19 @@ $CXX $CXXFLAGS -std=c++11 -I. \
      -o $OUT/libpng_read_fuzzer \
      -lFuzzingEngine .libs/libpng16.a -lz
 
+# build libpng_write_fuzzer.
+$CXX $CXXFLAGS -std=c++11 -I. \
+     $SRC/libpng/contrib/oss-fuzz/libpng_write_fuzzer.cc \
+     -o $OUT/libpng_write_fuzzer \
+     -lFuzzingEngine .libs/libpng16.a -lz
+
 # add seed corpus.
 find $SRC/libpng -name "*.png" | grep -v crashers | \
      xargs zip $OUT/libpng_read_fuzzer_seed_corpus.zip
+
+# add the same seed corpus for the write fuzzer.
+find $SRC/libpng -name "*.png" | grep -v crashers | \
+     xargs zip $OUT/libpng_write_fuzzer_seed_corpus.zip
 
 cp $SRC/libpng/contrib/oss-fuzz/*.dict \
      $SRC/libpng/contrib/oss-fuzz/*.options $OUT/
