@@ -32,7 +32,7 @@
 struct BufState
 {
     // using a ostringstream for the sake of simplicity, simultate File-like behavior
-    std::osstringstream data;
+    std::ostringstream data;
 };
 
 struct PngObjectHandler
